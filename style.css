@@ -1,8 +1,8 @@
 /*Thematic colors*/
 :root {
-  --theme-primary: #f6d365;
-  --theme-secondary: #fda085;
-  --theme-accent: #ff6f47;
+  --theme-primary: #BDB76B;
+  --theme-secondary: #556B2F;
+  --theme-accent: #8FBC8F;
   --theme-text: white;
 }
 
