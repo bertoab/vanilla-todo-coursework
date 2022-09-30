@@ -87,9 +87,12 @@ function filterTodo(e) {
   });
 }
 
-function saveLocalTodos(todo) {
+function saveLocalTodos(categoryName, todo) {
   let todos = getTodoStore();
-  todos.push(todo);
+  if (todos.categoryName === undefined) {
+    todos.categoryName = [];
+  }
+  todos.categoryName.push(todo)
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 function removeLocalTodos(todo) {
@@ -101,28 +104,54 @@ function removeLocalTodos(todo) {
 
 function getTodos() {
   let todos = getTodoStore();
-  todos.forEach(function(todo) {
-    //Create todo div
-    const todoDiv = document.createElement("div");
-    todoDiv.classList.add("todo");
-    //Create list element
-    const newTodo = document.createElement("li");
-    newTodo.innerText = todo;
-    newTodo.classList.add("todo-item");
-    todoDiv.appendChild(newTodo);
-    todoInput.value = "";
-    //Create 'Completed' button
-    const completedButton = document.createElement("button");
-    completedButton.innerHTML = `<i class="fas fa-check"></i>`;
-    completedButton.classList.add("complete-btn");
-    todoDiv.appendChild(completedButton);
-    //Create 'Trash' button
-    const trashButton = document.createElement("button");
-    trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
-    trashButton.classList.add("trash-btn");
-    todoDiv.appendChild(trashButton);
-    //Add configured todo div to list container
-    todoList.appendChild(todoDiv);
+  //Create category dividers
+  todos.keys().map((key) => {
+    const categoryDiv = document.createElement("div");
+    categoryDiv.classList.add("todo-category");
+    const categoryName = document.createElement("h1");
+    categoryName.innerText = key;
+    const todoList = document.createElement(ul);
+    todoList.classList.add("todo-list");
+    const todos = todos.key;
+    //Create todo items
+    todos.forEach(function(todo) {
+      //Create todo div
+      const todoDiv = document.createElement("div");
+      todoDiv.classList.add("todo");
+      //Create list element
+      const newTodo = document.createElement("li");
+      newTodo.innerText = todo.name;
+      newTodo.classList.add("todo-item");
+      todoDiv.appendChild(newTodo);
+      todoInput.value = "";  //... reset all input
+      //Create due date block
+      const dueDate = document.createElement("div");
+      dueDate.classList.add("due-date");
+      dueDateInfo = dateInfoFromStamp(todo.dueDate);
+      dueDate.innerHTML = `${dueDateInfo.date}<br>${dueDateInfo.time}`;
+      //Create completed balloon
+      const completed = document.createElement("span");
+      completed.classList.add("balloon", "completed-balloon");
+      completed.innerHTML = 'Done?<input type="checkbox" />';
+      completed.firstChild.value = todo.completed;
+      //Create submitted balloon
+      const submitted = document.createElement("span");
+      submitted.classList.add("balloon", "submitted-balloon");
+      submitted.innerHTML = 'Sent in?<input type="checkbox" />';
+      submitted.firstChild.value = todo.submitted;
+      //Create 'Completed' button
+      const completedButton = document.createElement("button");
+      completedButton.innerHTML = `<i class="fas fa-check"></i>`;
+      completedButton.classList.add("complete-btn");
+      todoDiv.appendChild(completedButton);
+      //Create 'Trash' button
+      const trashButton = document.createElement("button");
+      trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
+      trashButton.classList.add("trash-btn");
+      todoDiv.appendChild(trashButton);
+      //Add configured todo div to list container
+      todoList.appendChild(todoDiv);
+    });
   });
 }
 function getTodoStore() {
@@ -133,4 +162,12 @@ function getTodoStore() {
     todos = JSON.parse(localStorage.getItem("todos"));
   }
   return todos;
+}
+function dateInfoFromStamp(timestamp) {
+  const date = new Date();
+  const obj = {
+    date: Date.toDateString(),
+    time: Date.toTimeString()
+  };
+  return obj;
 }
