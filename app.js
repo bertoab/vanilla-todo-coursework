@@ -88,34 +88,19 @@ function filterTodo(e) {
 }
 
 function saveLocalTodos(todo) {
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
+  let todos = getTodoStore();
   todos.push(todo);
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 function removeLocalTodos(todo) {
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
+  let todos = getTodoStore();
   const todoIndex = todo.children[0].innerText;
   todos.splice(todos.indexOf(todoIndex), 1);
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 
 function getTodos() {
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
+  let todos = getTodoStore();
   todos.forEach(function(todo) {
     //Create todo div
     const todoDiv = document.createElement("div");
@@ -139,4 +124,13 @@ function getTodos() {
     //Add configured todo div to list container
     todoList.appendChild(todoDiv);
   });
+}
+function getTodoStore() {
+  let todos;
+  if (localStorage.getItem("todos") === null) {
+    todos = {};
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+  }
+  return todos;
 }
