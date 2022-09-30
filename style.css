@@ -46,13 +46,26 @@ form button:hover {
   color: white;
 }
 .todo-container {
+  min-height: 60vh;
+  overflow: scroll;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+}
+
+.todo-category {
+  min-width: 30%;
+  background: var(--theme-secondary); /* for debugging; each .todo-category will have it's custom color (and/or custom font color) set upon creating in JS */
+  margin: 0 0.6rem;
+  padding: 2rem 0 0.5rem 0;
+  border: solid var(--theme-primary) 3px;
+}
+.todo-category h1 {
+  color: lightgrey;
+  padding: 0 0.7rem;
 }
 
 .todo-list {
-  min-width: 30%;
   list-style: none;
 }
 
