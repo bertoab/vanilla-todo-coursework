@@ -24,7 +24,7 @@ header {
 
 header,
 form {
-  min-height: 20vh;
+  min-height: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -35,6 +35,10 @@ form button {
   font-size: 2rem;
   border: none;
   background: white;
+}
+form:first-of-type input {
+	margin: 0.5rem;
+	font-size: 0.75rem;
 }
 form button {
   color: var(--theme-accent);
