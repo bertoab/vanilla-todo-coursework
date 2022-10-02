@@ -23,30 +23,33 @@ header {
 }
 
 header,
-form {
+.form {
   min-height: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-form input,
-form button {
+.form:first-of-type {
+  min-height: 3vh;
+}
+.form input,
+.form button {
   padding: 0.5rem;
   font-size: 2rem;
   border: none;
   background: white;
 }
-form:first-of-type input {
+.form:first-of-type input {
 	margin: 0.5rem;
 	font-size: 0.75rem;
 }
-form button {
+.form button {
   color: var(--theme-accent);
   background: #f7fffe;
   cursor: pointer;
   transition: all 0.3s ease;
 }
-form button:hover {
+.form button:hover {
   background: var(--theme-accent);
   color: white;
 }

@@ -20,15 +20,14 @@
     <header>
       <h1>Coursework</h1>
     </header>
-		<form>
+		<div class="form">
 			<label for="duedate">Due Date</label>
 			<input type="datetime-local" name="duedate" />
 			<label for="category">Course</label>
 			<input type="search" name="category" list="categories" />
 			<datalist id="categories"></datalist>
-		</form>
-    <form>
-			<br />
+    </div>
+    <div class="form">
       <input type="text" class="todo-input" />
       <button class="todo-button" type="submit">
         <i class="fas fa-plus-square"></i>
@@ -40,7 +39,7 @@
           <option value="uncompleted">Uncompleted</option>
         </select>
       </div>
-    </form>
+    </div>
     <div class="todo-container">
       <div class="todo-category">
         <h1>Category Name</h1>
