@@ -66,17 +66,19 @@ function addTodo(e) {
   trashButton.classList.add("trash-btn");
   todoDiv.appendChild(trashButton);
   // (if it didn't already exist) create category container
-  const categoryDiv = document.createElement("div");
-  categoryDiv.classList.add("todo-category");
-  const categoryName = document.createElement("h1");
-  categoryName.innerText = category;
-  categoryDiv.appendChild(categoryName);
-  const todoList = document.createElement('ul');
-  todoList.classList.add("todo-list");
-  categoryDiv.appendChild(todoList);
-  todoContainer.appendChild(categoryDiv);
-  //Add to local category list HTML map
-  categories[category] = todoList;
+  if (!categories[category]) {
+    const categoryDiv = document.createElement("div");
+    categoryDiv.classList.add("todo-category");
+    const categoryName = document.createElement("h1");
+    categoryName.innerText = category;
+    categoryDiv.appendChild(categoryName);
+    const todoList = document.createElement('ul');
+    todoList.classList.add("todo-list");
+    categoryDiv.appendChild(todoList);
+    todoContainer.appendChild(categoryDiv);
+    //Add to local category list HTML map
+    categories[category] = todoList;
+  }
   //Add configured todo div to appropriate category
   categories[category].appendChild(todoDiv);
 }
