@@ -4,6 +4,9 @@ const todoButton = document.querySelector(".todo-button");
 const todoContainer = document.querySelector(".todo-container");
 const filterOption = document.querySelector(".filter-todo");
 
+//Global vars
+const categories = {};
+
 //Event Listeners
 document.addEventListener("DOMContentLoaded", getTodos);
 todoButton.addEventListener("click", addTodo);
@@ -15,19 +18,43 @@ filterOption.addEventListener("click", filterTodo);
 function addTodo(e) {
   //Prevent natural behaviour
   e.preventDefault();
+  //Create todo obj
+  const todo = {
+    name: todoInput.value,
+    dueDate: document.querySelector("#duedate").value,
+    completed: false,
+    submitted: false
+  };
+  const category = document.querySelector("#category").value;
   //Create todo div
   const todoDiv = document.createElement("div");
   todoDiv.classList.add("todo");
   //Create list element
   const newTodo = document.createElement("li");
   newTodo.classList.add("todo-item");
-  newTodo.innerText = todoInput.value;
+  newTodo.innerText = todo.name;
   //Save input to local
-  saveLocalTodos(todoInput.value);
+  saveLocalTodos(category, todo);
   //Add to todo div
   todoDiv.appendChild(newTodo);
   //Reset input
   todoInput.value = "";
+  //Create due date block
+  const dueDate = document.createElement("div");
+  dueDate.classList.add("due-date");
+  const dueDateInfo = dateInfoFromStamp(todo.dueDate);
+  dueDate.innerHTML = `${dueDateInfo.date}<br>${dueDateInfo.time}`;
+  todoDiv.appendChild(dueDate);
+  //Create completed balloon
+  const completed = document.createElement("span");
+  completed.classList.add("balloon", "completed-balloon");
+  completed.innerHTML = `Done?<input type="checkbox" value="${todo.completed}" />`;
+  todoDiv.appendChild(completed);
+  //Create submitted balloon
+  const submitted = document.createElement("span");
+  submitted.classList.add("balloon", "submitted-balloon");
+  submitted.innerHTML = `Sent in?<input type="checkbox" value="${todo.submitted}" />`;
+  todoDiv.appendChild(submitted);
   //Create 'Completed' button
   const completedButton = document.createElement("button");
   completedButton.innerHTML = `<i class="fas fa-check"></i>`;
@@ -38,8 +65,20 @@ function addTodo(e) {
   trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
   trashButton.classList.add("trash-btn");
   todoDiv.appendChild(trashButton);
-  //Add configured todo div to list container
-  todoContainer.appendChild(todoDiv);
+  // (if it didn't already exist) create category container
+  const categoryDiv = document.createElement("div");
+  categoryDiv.classList.add("todo-category");
+  const categoryName = document.createElement("h1");
+  categoryName.innerText = category;
+  categoryDiv.appendChild(categoryName);
+  const todoList = document.createElement('ul');
+  todoList.classList.add("todo-list");
+  categoryDiv.appendChild(todoList);
+  todoContainer.appendChild(categoryDiv);
+  //Add to local category list HTML map
+  categories[category] = todoList;
+  //Add configured todo div to appropriate category
+  categories[category].appendChild(todoDiv);
 }
 
 function deleteTodo(e) {
@@ -89,10 +128,10 @@ function filterTodo(e) {
 
 function saveLocalTodos(categoryName, todo) {
   let todos = getTodoStore();
-  if (todos.categoryName === undefined) {
-    todos.categoryName = [];
+  if (todos[categoryName] === undefined) {
+    todos[categoryName] = [];
   }
-  todos.categoryName.push(todo)
+  todos[categoryName].push(todo)
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 function removeLocalTodos(todo) {
@@ -114,6 +153,8 @@ function getTodos() {
     const todoList = document.createElement('ul');
     todoList.classList.add("todo-list");
     categoryDiv.appendChild(todoList);
+    //Add to local category list HTML map
+    categories[key] = todoList;
     const todos = todoData[key];
     //Create todo items
     todos.forEach(function(todo) {
