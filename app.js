@@ -26,45 +26,12 @@ function addTodo(e) {
     submitted: false
   };
   const category = document.querySelector("#category").value;
-  //Create todo div
-  const todoDiv = document.createElement("div");
-  todoDiv.classList.add("todo");
-  //Create list element
-  const newTodo = document.createElement("li");
-  newTodo.classList.add("todo-item");
-  newTodo.innerText = todo.name;
-  //Save input to local
+  //Save todo
   saveLocalTodos(category, todo);
-  //Add to todo div
-  todoDiv.appendChild(newTodo);
-  //Reset input
+  //Create todo div
+  const todoDiv = configuredTodoDiv(todo);
+  //Reset input [TODO: make this reset other factors as well!]
   todoInput.value = "";
-  //Create due date block
-  const dueDate = document.createElement("div");
-  dueDate.classList.add("due-date");
-  const dueDateInfo = dateInfoFromStamp(todo.dueDate);
-  dueDate.innerHTML = `${dueDateInfo.date}<br>${dueDateInfo.time}`;
-  todoDiv.appendChild(dueDate);
-  //Create completed balloon
-  const completed = document.createElement("span");
-  completed.classList.add("balloon", "completed-balloon");
-  completed.innerHTML = `Done?<input type="checkbox" value="${todo.completed}" />`;
-  todoDiv.appendChild(completed);
-  //Create submitted balloon
-  const submitted = document.createElement("span");
-  submitted.classList.add("balloon", "submitted-balloon");
-  submitted.innerHTML = `Sent in?<input type="checkbox" value="${todo.submitted}" />`;
-  todoDiv.appendChild(submitted);
-  //Create 'Completed' button
-  const completedButton = document.createElement("button");
-  completedButton.innerHTML = `<i class="fas fa-check"></i>`;
-  completedButton.classList.add("complete-btn");
-  todoDiv.appendChild(completedButton);
-  //Create 'Trash' button
-  const trashButton = document.createElement("button");
-  trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
-  trashButton.classList.add("trash-btn");
-  todoDiv.appendChild(trashButton);
   // (if it didn't already exist) create category container
   if (!categories[category]) {
     const categoryDiv = document.createElement("div");
@@ -80,7 +47,7 @@ function addTodo(e) {
     categories[category] = todoList;
   }
   //Add configured todo div to appropriate category
-  categories[category].appendChild(todoDiv);
+  if (todoDiv) categories[category].appendChild(todoDiv);
 }
 
 function interactTodo(e) {
@@ -165,45 +132,9 @@ function getTodos() {
     const todos = todoData[key];
     //Create todo items
     todos.forEach(function(todo) {
-      //Create todo div
-      const todoDiv = document.createElement("div");
-      todoDiv.classList.add("todo");
-      //Create list element
-      const newTodo = document.createElement("li");
-      newTodo.innerText = todo.name;
-      newTodo.classList.add("todo-item");
-      todoDiv.appendChild(newTodo);
-      todoInput.value = "";  //... reset all input
-      //Create due date block
-      const dueDate = document.createElement("div");
-      dueDate.classList.add("due-date");
-      dueDateInfo = dateInfoFromStamp(todo.dueDate);
-      dueDate.innerHTML = `${dueDateInfo.date}<br>${dueDateInfo.time}`;
-      todoDiv.appendChild(dueDate);
-      //Create completed balloon
-      const completed = document.createElement("span");
-      completed.classList.add("balloon", "completed-balloon");
-      completed.innerHTML = 'Done?<input type="checkbox" />';
-      completed.firstChild.value = todo.completed;
-      todoDiv.appendChild(completed);
-      //Create submitted balloon
-      const submitted = document.createElement("span");
-      submitted.classList.add("balloon", "submitted-balloon");
-      submitted.innerHTML = 'Sent in?<input type="checkbox" />';
-      submitted.firstChild.value = todo.submitted;
-      todoDiv.appendChild(submitted);
-      //Create 'Completed' button
-      const completedButton = document.createElement("button");
-      completedButton.innerHTML = `<i class="fas fa-check"></i>`;
-      completedButton.classList.add("complete-btn");
-      todoDiv.appendChild(completedButton);
-      //Create 'Trash' button
-      const trashButton = document.createElement("button");
-      trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
-      trashButton.classList.add("trash-btn");
-      todoDiv.appendChild(trashButton);
+      const todoDiv = configuredTodoDiv(todo);
       //Add configured todo div to list container
-      todoList.appendChild(todoDiv);
+      if (todoDiv) todoList.appendChild(todoDiv);
     });
     todoContainer.appendChild(categoryDiv);
   });
@@ -217,6 +148,7 @@ function getTodoStore() {
   }
   return todos;
 }
+
 function dateInfoFromStamp(timestamp) {
   const date = new Date();
   const obj = {
@@ -224,4 +156,52 @@ function dateInfoFromStamp(timestamp) {
     time: date.toLocaleTimeString("en-us")
   };
   return obj;
+}
+
+// HTML Modules
+function configuredTodoDiv(todo) {
+  if (!todo) return;
+  //Create todo div
+  const todoDiv = document.createElement("div");
+  todoDiv.classList.add("todo");
+  //Create list element
+  const newTodo = document.createElement("li");
+  newTodo.innerText = todo.name ? todo.name : "";
+  newTodo.classList.add("todo-item");
+  todoDiv.appendChild(newTodo);
+  //Create due date block
+  const dueDate = dueDateDiv(todo);
+  if (dueDate) todoDiv.appendChild(dueDate);
+  //Create completed balloon
+  const completed = document.createElement("span");
+  completed.classList.add("balloon", "completed-balloon");
+  completed.innerHTML = 'Done?<input type="checkbox" />';
+  completed.firstChild.value = "on"; //DEBUGGING
+  todoDiv.appendChild(completed);
+  //Create submitted balloon
+  const submitted = document.createElement("span");
+  submitted.classList.add("balloon", "submitted-balloon");
+  submitted.innerHTML = 'Sent in?<input type="checkbox" />';
+  submitted.firstChild.value = todo.submitted;
+  todoDiv.appendChild(submitted);
+  //Create 'Completed' button
+  const completedButton = document.createElement("button");
+  completedButton.innerHTML = `<i class="fas fa-check"></i>`;
+  completedButton.classList.add("complete-btn");
+  todoDiv.appendChild(completedButton);
+  //Create 'Trash' button
+  const trashButton = document.createElement("button");
+  trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
+  trashButton.classList.add("trash-btn");
+  todoDiv.appendChild(trashButton);
+  return todoDiv;
+}
+function dueDateDiv(todo) {
+  if (!todo.dueDate) return;
+  //Create due date block
+  const dueDate = document.createElement("div");
+  dueDate.classList.add("due-date");
+  const dueDateInfo = dateInfoFromStamp(todo.dueDate);
+  dueDate.innerHTML = `${dueDateInfo.date}<br>${dueDateInfo.time}`;
+  return dueDate;
 }
