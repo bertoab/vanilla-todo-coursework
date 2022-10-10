@@ -10,7 +10,7 @@ const categories = {};
 //Event Listeners
 document.addEventListener("DOMContentLoaded", getTodos);
 todoButton.addEventListener("click", addTodo);
-todoContainer.addEventListener("click", deleteTodo);
+todoContainer.addEventListener("click", interactTodo);
 filterOption.addEventListener("click", filterTodo);
 
 //Functions
@@ -83,24 +83,24 @@ function addTodo(e) {
   categories[category].appendChild(todoDiv);
 }
 
-function deleteTodo(e) {
-  const item = e.target;
+function interactTodo(e) {
+  const eventTarget = e.target;
 
-  if (item.classList[0] === "trash-btn") {
+  if (eventTarget.classList[0] === "trash-btn") {
     // e.target.parentElement.remove(); //Simple deletion
-    const todo = item.parentElement;
-    todo.classList.add("fall"); //Trigger deletion animation
+    const todoDiv = eventTarget.parentElement;
+    todoDiv.classList.add("fall"); //Trigger deletion animation
     //Remove from local storage
-    removeLocalTodos(todo);
+    removeLocalTodos(eventTarget.parentElement.parentElement.parentElement.firstChild.innerHTML, todoDiv);
     //Set event handler to delete element once transition is completed
-    todo.addEventListener("transitionend", e => {
-      todo.remove();
+    todoDiv.addEventListener("transitionend", e => {
+      todoDiv.remove();
     });
   }
-  if (item.classList[0] === "complete-btn") {
-    const todo = item.parentElement;
-    todo.classList.toggle("completed"); //Trigger completion animation
-    console.log(todo);
+  if (eventTarget.classList[0] === "complete-btn") {
+    const todoDiv = eventTarget.parentElement;
+    todoDiv.classList.toggle("completed"); //Trigger completion animation
+    console.log(todoDiv);
   }
 }
 
@@ -136,10 +136,15 @@ function saveLocalTodos(categoryName, todo) {
   todos[categoryName].push(todo)
   localStorage.setItem("todos", JSON.stringify(todos));
 }
-function removeLocalTodos(todo) {
+function removeLocalTodos(categoryName, todoDiv) {
   let todos = getTodoStore();
-  const todoIndex = todo.children[0].innerText;
-  todos.splice(todos.indexOf(todoIndex), 1);
+  const todoIndex = {
+		name: todoDiv.children[0].innerHTML,
+		dueDate: todoDiv.children[1].value,
+		completed: todoDiv.children[2].firstChild.value,
+		submitted: todoDiv.children[3].firstChild.value
+	};
+	todos[categoryName].splice(todos[categoryName].indexOf(todoIndex), 1);
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 
