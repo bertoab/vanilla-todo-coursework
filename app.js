@@ -161,14 +161,12 @@ function configuredTodoDiv(todo) {
   //Create completed balloon
   const completed = document.createElement("span");
   completed.classList.add("balloon", "completed-balloon");
-  completed.innerHTML = 'Done?<input type="checkbox" />';
-  completed.firstChild.value = "on"; //DEBUGGING
+  completed.innerHTML = 'Done?<input type="checkbox" ' + (todo.completed ? 'checked' : '') + '/>';
   todoDiv.appendChild(completed);
   //Create submitted balloon
   const submitted = document.createElement("span");
   submitted.classList.add("balloon", "submitted-balloon");
-  submitted.innerHTML = 'Sent in?<input type="checkbox" />';
-  submitted.firstChild.value = todo.submitted;
+  submitted.innerHTML = 'Sent in?<input type="checkbox" ' + (todo.submitted ? 'checked' : '') + '/>';
   todoDiv.appendChild(submitted);
   //Create 'Completed' button
   const completedButton = document.createElement("button");
