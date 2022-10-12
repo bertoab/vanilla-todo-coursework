@@ -60,6 +60,18 @@ function interactTodo(e) {
     const todoDiv = eventTarget.parentElement;
     todoDiv.classList.toggle("completed"); //Trigger completion animation
     console.log(todoDiv);
+  } if (eventTarget.tagName === "INPUT" && eventTarget.parentElement.classList[0] === "balloon" && eventTarget.parentElement.classList[1] === "completed-balloon") {
+    const category = eventTarget.parentElement.parentElement.parentElement.parentElement.getElementsByTagName("H1")[0].innerHTML;
+    const todoName = eventTarget.parentElement.parentElement.getElementsByTagName("LI")[0].innerHTML;
+    const todoObj = fetchTodoEntry(category, todoName);
+    todoObj.completed = todoObj.completed ? false : true;
+    updateLocalTodo(category, todoObj);
+  } if (eventTarget.tagName === "INPUT" && eventTarget.parentElement.classList[0] === "balloon" && eventTarget.parentElement.classList[1] === "submitted-balloon") {
+    const category = eventTarget.parentElement.parentElement.parentElement.parentElement.getElementsByTagName("H1")[0].innerHTML;
+    const todoName = eventTarget.parentElement.parentElement.getElementsByTagName("LI")[0].innerHTML;
+    const todoObj = fetchTodoEntry(category, todoName);
+    todoObj.submitted = todoObj.submitted ? false : true;
+    updateLocalTodo(category, todoObj);
   }
 }
 
