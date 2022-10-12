@@ -34,17 +34,9 @@ function addTodo(e) {
   todoInput.value = "";
   // (if it didn't already exist) create category container
   if (!categories[category]) {
-    const categoryDiv = document.createElement("div");
-    categoryDiv.classList.add("todo-category");
-    const categoryName = document.createElement("h1");
-    categoryName.innerText = category;
-    categoryDiv.appendChild(categoryName);
-    const todoList = document.createElement('ul');
-    todoList.classList.add("todo-list");
-    categoryDiv.appendChild(todoList);
-    todoContainer.appendChild(categoryDiv);
+    const cDiv = categoryDiv(category);
     //Add to local category list HTML map
-    categories[category] = todoList;
+    categories[category] = cDiv.querySelector("ul");
   }
   //Add configured todo div to appropriate category
   if (todoDiv) categories[category].appendChild(todoDiv);
@@ -119,14 +111,8 @@ function getTodos() {
   let todoData = getTodoStore();
   //Create category dividers
   Object.keys(todoData).map((key) => {
-    const categoryDiv = document.createElement("div");
-    categoryDiv.classList.add("todo-category");
-    const categoryName = document.createElement("h1");
-    categoryName.innerText = key;
-    categoryDiv.appendChild(categoryName);
-    const todoList = document.createElement('ul');
-    todoList.classList.add("todo-list");
-    categoryDiv.appendChild(todoList);
+    const cDiv = categoryDiv(key);
+    const todoList = cDiv.querySelector("ul");
     //Add to local category list HTML map
     categories[key] = todoList;
     const todos = todoData[key];
@@ -136,7 +122,7 @@ function getTodos() {
       //Add configured todo div to list container
       if (todoDiv) todoList.appendChild(todoDiv);
     });
-    todoContainer.appendChild(categoryDiv);
+    todoContainer.appendChild(cDiv);
   });
 }
 function getTodoStore() {
@@ -195,6 +181,17 @@ function configuredTodoDiv(todo) {
   trashButton.classList.add("trash-btn");
   todoDiv.appendChild(trashButton);
   return todoDiv;
+}
+function categoryDiv(category) {
+  const categoryDiv = document.createElement("div");
+  categoryDiv.classList.add("todo-category");
+  const categoryName = document.createElement("h1");
+  categoryName.innerText = category;
+  categoryDiv.appendChild(categoryName);
+  const todoList = document.createElement('ul');
+  todoList.classList.add("todo-list");
+  categoryDiv.appendChild(todoList);
+  return categoryDiv;
 }
 function dueDateDiv(todo) {
   if (!todo.dueDate) return;
