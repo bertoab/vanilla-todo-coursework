@@ -36,6 +36,7 @@ function addTodo(e) {
   // (if it didn't already exist) create category container
   if (!categories[category]) {
     const cDiv = categoryDiv(category);
+    todoContainer.appendChild(cDiv);
     //Add to local category list HTML map
     categories[category] = cDiv.querySelector("ul");
   }
