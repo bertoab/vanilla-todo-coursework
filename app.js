@@ -6,6 +6,7 @@ const filterOption = document.querySelector(".filter-todo");
 
 //Global vars
 const categories = {};
+let todoStore = getTodoStore();
 
 //Event Listeners
 document.addEventListener("DOMContentLoaded", getTodos);
@@ -64,14 +65,16 @@ function interactTodo(e) {
     const category = eventTarget.parentElement.parentElement.parentElement.parentElement.getElementsByTagName("H1")[0].innerHTML;
     const todoName = eventTarget.parentElement.parentElement.getElementsByTagName("LI")[0].innerHTML;
     const todoObj = fetchTodoEntry(category, todoName);
+    const oldTodo = todoObj;
     todoObj.completed = todoObj.completed ? false : true;
-    updateLocalTodo(category, todoObj);
+    updateLocalTodos(category, oldTodo, todoObj);
   } if (eventTarget.tagName === "INPUT" && eventTarget.parentElement.classList[0] === "balloon" && eventTarget.parentElement.classList[1] === "submitted-balloon") {
     const category = eventTarget.parentElement.parentElement.parentElement.parentElement.getElementsByTagName("H1")[0].innerHTML;
     const todoName = eventTarget.parentElement.parentElement.getElementsByTagName("LI")[0].innerHTML;
     const todoObj = fetchTodoEntry(category, todoName);
+    const oldTodo = todoObj;
     todoObj.submitted = todoObj.submitted ? false : true;
-    updateLocalTodo(category, todoObj);
+    updateLocalTodos(category, oldTodo, todoObj);
   }
 }
 
@@ -105,6 +108,7 @@ function saveLocalTodos(categoryName, todo) {
     todos[categoryName] = [];
   }
   todos[categoryName].push(todo)
+  todoStore = todos;
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 function removeLocalTodos(categoryName, todoDiv) {
@@ -116,7 +120,13 @@ function removeLocalTodos(categoryName, todoDiv) {
 		submitted: todoDiv.children[3].firstChild.value
 	};
 	todos[categoryName].splice(todos[categoryName].indexOf(todoIndex), 1);
+  todoStore = todos;
   localStorage.setItem("todos", JSON.stringify(todos));
+}
+function updateLocalTodos(categoryName, todoOld, todoNew) {
+  removeLocalTodos(categoryName, configuredTodoDiv(todoOld));
+  saveLocalTodos(categoryName, todoNew);
+  // POTENTIAL BUG/INEFFICIENCY: Calling these two functions back to back causes 'todoStore' to be updated unnecessarily. the timing of these functions may also cause users who check multiple items in very fast succession to trigger a bug where todo items duplicate or save in incorrect states.
 }
 
 function getTodos() {
@@ -145,6 +155,11 @@ function getTodoStore() {
     todos = JSON.parse(localStorage.getItem("todos"));
   }
   return todos;
+}
+function fetchTodoEntry(category, todoName) {
+  const todoList = todoStore[category];
+  if (!todoList) return;
+  return todoList.find(todoInfo => todoInfo.name === todoName);
 }
 
 function dateInfoFromStamp(timestamp) {
