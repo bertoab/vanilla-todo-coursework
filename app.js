@@ -37,8 +37,11 @@ function addTodo(e) {
   if (!categories[category]) {
     const cDiv = categoryDiv(category);
     todoContainer.appendChild(cDiv);
-    //Add to local category list HTML map
+    //Add to local category list HTML map & add to UI datalist
     categories[category] = cDiv.querySelector("ul");
+    const opt = document.createElement("option");
+    opt.value = category;
+    document.querySelector('#categories').appendChild(opt);
   }
   //Add configured todo div to appropriate category
   if (todoDiv) categories[category].appendChild(todoDiv);
@@ -136,8 +139,11 @@ function getTodos() {
   Object.keys(todoData).map((key) => {
     const cDiv = categoryDiv(key);
     const todoList = cDiv.querySelector("ul");
-    //Add to local category list HTML map
+    //Add to local category list HTML map & UI datalist
     categories[key] = todoList;
+    const opt = document.createElement("option");
+    opt.value = key;
+    document.querySelector('#categories').appendChild(opt);
     const todos = todoData[key];
     //Create todo items
     todos.forEach(function(todo) {
