@@ -155,11 +155,17 @@ function getTodos() {
   });
 }
 function getTodoStore() {
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = {};
+  let todos, parsed;
+  if (typeof localStorage.getItem("todos") === 'string') {
+    try {
+      parsed = JSON.parse(localStorage.getItem("todos"));
+      if (parsed == null || !(typeof parsed === 'object')) parsed = {};
+    } catch (SyntaxError) {
+      parsed = {};
+    }
+    todos = parsed;
   } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
+    todos = {};
   }
   return todos;
 }
