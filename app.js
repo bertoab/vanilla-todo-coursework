@@ -28,8 +28,7 @@ function addTodo(e) {
   const todo = {
     name: todoInput.value,
     dueDate: document.querySelector("#duedate").value,
-    completed: false,
-    submitted: false
+    completed: false
   };
   const category = document.querySelector("#category").value;
   //Save todo
@@ -77,13 +76,6 @@ function interactTodo(e) {
     const oldTodo = todoObj;
     todoObj.completed = todoObj.completed ? false : true;
     updateLocalTodos(category, oldTodo, todoObj);
-  } if (eventTarget.tagName === "INPUT" && eventTarget.parentElement.classList[0] === "balloon" && eventTarget.parentElement.classList[1] === "submitted-balloon") {
-    const category = eventTarget.parentElement.parentElement.parentElement.parentElement.getElementsByTagName("H1")[0].innerHTML;
-    const todoName = eventTarget.parentElement.parentElement.getElementsByTagName("LI")[0].innerHTML;
-    const todoObj = fetchTodoEntry(category, todoName);
-    const oldTodo = todoObj;
-    todoObj.submitted = todoObj.submitted ? false : true;
-    updateLocalTodos(category, oldTodo, todoObj);
   }
 }
 
@@ -125,8 +117,7 @@ function removeLocalTodos(categoryName, todoDiv) {
   const todoIndex = {
 		name: todoDiv.children[0].innerHTML,
 		dueDate: todoDiv.children[1].value,
-		completed: todoDiv.children[2].firstChild.value,
-		submitted: todoDiv.children[3].firstChild.value
+		completed: todoDiv.children[2].firstChild.value
 	};
 	todos[categoryName].splice(todos[categoryName].indexOf(todoIndex), 1);
   todoStore = todos;
@@ -208,11 +199,6 @@ function configuredTodoDiv(todo) {
   completed.classList.add("balloon", "completed-balloon");
   completed.innerHTML = 'Done?<input type="checkbox" ' + (todo.completed ? 'checked' : '') + '/>';
   todoDiv.appendChild(completed);
-  //Create submitted balloon
-  const submitted = document.createElement("span");
-  submitted.classList.add("balloon", "submitted-balloon");
-  submitted.innerHTML = 'Sent in?<input type="checkbox" ' + (todo.submitted ? 'checked' : '') + '/>';
-  todoDiv.appendChild(submitted);
   //Create 'Completed' button
   const completedButton = document.createElement("button");
   completedButton.innerHTML = `<i class="fas fa-check"></i>`;
