@@ -11,6 +11,11 @@ let todoStore = getTodoStore();
 //Event Listeners
 document.addEventListener("DOMContentLoaded", getTodos);
 todoButton.addEventListener("click", addTodo);
+todoInput.addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    addTodo(e);
+  }
+});
 todoContainer.addEventListener("click", interactTodo);
 filterOption.addEventListener("click", filterTodo);
 
