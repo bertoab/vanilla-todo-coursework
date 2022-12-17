@@ -73,7 +73,8 @@ function interactTodo(e) {
     const category = eventTarget.parentElement.parentElement.parentElement.parentElement.getElementsByTagName("H1")[0].innerHTML;
     const todoName = eventTarget.parentElement.parentElement.getElementsByTagName("LI")[0].innerHTML;
     const todoObj = fetchTodoEntry(category, todoName);
-    const oldTodo = todoObj;
+    let oldTodo = {};
+    Object.assign(oldTodo, todoObj);
     todoObj.completed = todoObj.completed ? false : true;
     updateLocalTodos(category, oldTodo, todoObj);
   }
@@ -113,20 +114,16 @@ function saveLocalTodos(categoryName, todo) {
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 function removeLocalTodos(categoryName, todoDiv) {
-  let todos = getTodoStore();
-  const todoIndex = {
-		name: todoDiv.children[0].innerHTML,
-		dueDate: todoDiv.children[1].value,
-		completed: todoDiv.children[2].firstChild.value
-	};
-	todos[categoryName].splice(todos[categoryName].indexOf(todoIndex), 1);
+  let todos = getTodoStore(), todoIndex = todoDiv.children[0].innerHTML;
+	todos[categoryName].splice(todos[categoryName].indexOf(todos[categoryName].find(todo => todo.name === todoIndex)), 1);
   todoStore = todos;
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 function updateLocalTodos(categoryName, todoOld, todoNew) {
-  removeLocalTodos(categoryName, configuredTodoDiv(todoOld));
-  saveLocalTodos(categoryName, todoNew);
-  // POTENTIAL BUG/INEFFICIENCY: Calling these two functions back to back causes 'todoStore' to be updated unnecessarily. the timing of these functions may also cause users who check multiple items in very fast succession to trigger a bug where todo items duplicate or save in incorrect states.
+  let todos = getTodoStore();
+  todos[categoryName].splice(todos[categoryName].indexOf(todos[categoryName].find(todo => todo.name === todoOld.name)), 1, todoNew);
+  todoStore = todos;
+  localStorage.setItem("todos", JSON.stringify(todos));
 }
 
 function getTodos() {
