@@ -1,3 +1,12 @@
+//Config
+const APPLICATION_MODE = "development";
+let StorageKey;
+if (APPLICATION_MODE === "development")
+  StorageKey = "dev_todos";
+else if (APPLICATION_MODE === "production")
+  StorageKey = "todos";
+else throw Error("Unknown application mode");
+
 //Select DOM
 const dateInput = document.querySelector("#duedate");
 const todoInput = document.querySelector(".todo-input");
@@ -159,19 +168,19 @@ function saveLocalTodos(categoryName, todo) {
   }
   todos[categoryName].push(todo)
   todoStore = todos;
-  localStorage.setItem("todos", JSON.stringify(todos));
+  localStorage.setItem(StorageKey, JSON.stringify(todos));
 }
 function removeLocalTodos(categoryName, todoDiv) {
   let todos = getTodoStore(), todoIndex = todoDiv.children[0].innerHTML;
 	todos[categoryName].splice(todos[categoryName].indexOf(todos[categoryName].find(todo => todo.name === todoIndex)), 1);
   todoStore = todos;
-  localStorage.setItem("todos", JSON.stringify(todos));
+  localStorage.setItem(StorageKey, JSON.stringify(todos));
 }
 function updateLocalTodos(categoryName, todoOld, todoNew) {
   let todos = getTodoStore();
   todos[categoryName].splice(todos[categoryName].indexOf(todos[categoryName].find(todo => todo.name === todoOld.name)), 1, todoNew);
   todoStore = todos;
-  localStorage.setItem("todos", JSON.stringify(todos));
+  localStorage.setItem(StorageKey, JSON.stringify(todos));
 }
 
 function getTodos() {
@@ -197,9 +206,9 @@ function getTodos() {
 }
 function getTodoStore() {
   let todos, parsed;
-  if (typeof localStorage.getItem("todos") === 'string') {
+  if (typeof localStorage.getItem(StorageKey) === 'string') {
     try {
-      parsed = JSON.parse(localStorage.getItem("todos"));
+      parsed = JSON.parse(localStorage.getItem(StorageKey));
       if (parsed == null || !(typeof parsed === 'object')) parsed = {};
     } catch (SyntaxError) {
       parsed = {};
