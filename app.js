@@ -1,4 +1,5 @@
 //Select DOM
+const dateInput = document.querySelector("#duedate");
 const todoInput = document.querySelector(".todo-input");
 const todoButton = document.querySelector(".todo-button");
 const todoContainer = document.querySelector(".todo-container");
@@ -7,10 +8,57 @@ const filterOption = document.querySelector(".filter-todo");
 //Global vars
 const categories = {};
 let todoStore = getTodoStore();
+const dateInputHistory = [];
 
 //Event Listeners
 document.addEventListener("DOMContentLoaded", getTodos);
 todoButton.addEventListener("click", addTodo);
+dateInput.addEventListener("keypress", function(e) {
+  function validateDigitASCII(code) { return code >= 48 && code <= 57 }
+
+  if (e.key === 'Enter') {
+    let commandFired = false;
+    // test for 'smart commands'
+    /*
+    For now, all 'smart commands' are 2 characters in length.
+    Therefore, this algorithm only concerns the last and 
+    Second to last members of dateInputHistory
+    */
+    const first = dateInputHistory[dateInputHistory.length - 2],
+          second = dateInputHistory[dateInputHistory.length - 1];
+
+    if (validateDigitASCII(second)) {
+      if (first === 'D'.charCodeAt()) {
+        commandFired = true;
+        const d = new Date();
+        d.setDate(d.getDate() + Number(String.fromCharCode(second)));
+        e.target.value = d.toISOString().substring(0, 10);
+      }
+      if (first === 'M'.charCodeAt()) {
+        commandFired = true;
+        const d = new Date();
+        d.setMonth(d.getMonth() + Number(String.fromCharCode(second)));
+        e.target.value = d.toISOString().substring(0, 10);
+      }
+      if (first === 'Y'.charCodeAt()) {
+        commandFired = true;
+        const d = new Date();
+        d.setFullYear(d.getFullYear() + Number(String.fromCharCode(second)));
+        e.target.value = d.toISOString().substring(0, 10);
+      }
+    }
+
+    if (!commandFired)
+      e.target.nextElementSibling.focus();
+
+    // clear dateInputHistory
+    dateInputHistory.length = 0;
+  } else { // attempt to capture keypress into dateInputHistory
+    keyCode = e.key.toUpperCase().charCodeAt();
+    if ((keyCode >= 65 && keyCode <= 90) || (validateDigitASCII(keyCode))) // validate true if number or letter
+      dateInputHistory.push(keyCode)
+  }
+});
 todoInput.addEventListener("keypress", function(e) {
   if (e.key === "Enter") {
     addTodo(e);
