@@ -282,6 +282,6 @@ function dueDateDiv(todo) {
   const dueDate = document.createElement("div");
   dueDate.classList.add("due-date");
   const dueDateInfo = dateInfoFromStamp(todo.dueDate);
-  dueDate.innerHTML = `${dueDateInfo.date}<br>${dueDateInfo.time}`;
+  dueDate.innerHTML = `${dueDateInfo.date}`;
   return dueDate;
 }
