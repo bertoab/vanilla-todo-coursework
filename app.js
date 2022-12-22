@@ -226,7 +226,7 @@ function fetchTodoEntry(category, todoName) {
 }
 
 function dateInfoFromStamp(timestamp) {
-  const date = new Date();
+  const date = new Date(timestamp + "T00:00");
   const obj = {
     date: date.toDateString(),
     time: date.toLocaleTimeString("en-us")
